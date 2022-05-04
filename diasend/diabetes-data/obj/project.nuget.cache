@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "pDEollyhlv5VzDyQxxSLDKSaXlB/nlMykH2SpVpspamQRhISA7GfQXb4hD+BUlwi/a0Iulz8gqojqwS8WTPGnw==",
+  "success": true,
+  "projectFilePath": "C:\\git\\diabetes\\diasend\\diabetes-data\\diabetes-data.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\mgay\\.nuget\\packages\\csvhelper\\27.2.1\\csvhelper.27.2.1.nupkg.sha512"
+  ],
+  "logs": []
+}
