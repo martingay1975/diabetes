@@ -1,11 +1,15 @@
-﻿namespace Helper.Nightscout
+using System.Text.Json.Serialization;
+
+namespace Helper.Nightscout
 {
-    public class TreatmentDto
+
+	public class TreatmentDto
     {
-        /// <summary>
-        /// Internally assigned id.
-        /// </summary>
-        public string _id { get; set; }
+		/// <summary>
+		/// Internally assigned id.
+		/// </summary>
+		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+		public string? _id { get; set; }
 
         /// <summary>
         /// The type of treatment event.
@@ -15,7 +19,7 @@
         /// <summary>
         /// The date of the event, might be set retroactively .
         /// </summary>
-        public string? Created_at { get; set; }
+        public string Created_at { get; set; }
 
         /// <summary>
         /// Current glucose.

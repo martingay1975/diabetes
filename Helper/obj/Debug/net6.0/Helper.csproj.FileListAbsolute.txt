@@ -1,0 +1,12 @@
+C:\git\diabetes\Helper\bin\Debug\net6.0\Helper.deps.json
+C:\git\diabetes\Helper\bin\Debug\net6.0\Helper.dll
+C:\git\diabetes\Helper\bin\Debug\net6.0\ref\Helper.dll
+C:\git\diabetes\Helper\bin\Debug\net6.0\Helper.pdb
+C:\git\diabetes\Helper\obj\Debug\net6.0\Helper.csproj.AssemblyReference.cache
+C:\git\diabetes\Helper\obj\Debug\net6.0\Helper.GeneratedMSBuildEditorConfig.editorconfig
+C:\git\diabetes\Helper\obj\Debug\net6.0\Helper.AssemblyInfoInputs.cache
+C:\git\diabetes\Helper\obj\Debug\net6.0\Helper.AssemblyInfo.cs
+C:\git\diabetes\Helper\obj\Debug\net6.0\Helper.csproj.CoreCompileInputs.cache
+C:\git\diabetes\Helper\obj\Debug\net6.0\Helper.dll
+C:\git\diabetes\Helper\obj\Debug\net6.0\ref\Helper.dll
+C:\git\diabetes\Helper\obj\Debug\net6.0\Helper.pdb

@@ -37,7 +37,7 @@ namespace azure
         public async Task<int> ProcessAsync()
         {
             var counter = 0;
-            var nightscoutClient = new NightscoutClient();
+            var nightscoutClient = new NightscoutClient(null, null);
             var (nightscoutDataList, lastUpdateDate) = await nightscoutClient.GetEntriesAsync(new DateTime(2022,1,1));
             var bloodGlucoseItemList = nightscoutDataList.Select(BloodGlucoseItemMapper.Map);
             var bloodGlucoseRepository = new BloodGlucoseRepository();
