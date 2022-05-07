@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "agHbru2Tl3NDQFICaysX0rcP6/dKT2hF3mbBAdtdEKX4jb4nHI00zRm4fk2fhLGBAtIP8aNUwMTPb+vpJ5a8qA==",
+  "success": true,
+  "projectFilePath": "C:\\git\\diabetes\\Helper\\Helper.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\mgay\\.nuget\\packages\\csvhelper\\27.2.1\\csvhelper.27.2.1.nupkg.sha512"
+  ],
+  "logs": []
+}
