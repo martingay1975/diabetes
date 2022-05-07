@@ -10,11 +10,14 @@
         "projectUniqueName": "C:\\git\\diabetes\\Helper\\Helper.csproj",
         "projectName": "Helper",
         "projectPath": "C:\\git\\diabetes\\Helper\\Helper.csproj",
-        "packagesPath": "C:\\Users\\mgay\\.nuget\\packages\\",
+        "packagesPath": "C:\\Users\\Slop\\.nuget\\packages\\",
         "outputPath": "C:\\git\\diabetes\\Helper\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
         "configFilePaths": [
-          "C:\\Users\\mgay\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Slop\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -70,11 +73,14 @@
         "projectUniqueName": "C:\\git\\diabetes\\RunExe\\RunExe.csproj",
         "projectName": "RunExe",
         "projectPath": "C:\\git\\diabetes\\RunExe\\RunExe.csproj",
-        "packagesPath": "C:\\Users\\mgay\\.nuget\\packages\\",
+        "packagesPath": "C:\\Users\\Slop\\.nuget\\packages\\",
         "outputPath": "C:\\git\\diabetes\\RunExe\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
         "configFilePaths": [
-          "C:\\Users\\mgay\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Slop\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
