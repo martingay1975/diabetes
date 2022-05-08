@@ -1,4 +1,4 @@
-﻿using CsvHelper;
+using CsvHelper;
 using System.Globalization;
 // mmol/L
 // mg/dl
@@ -7,18 +7,18 @@ namespace Helper.Diasend
 {
     public class DiasendCsvReader
     {
-        public void Read()
+        public List<InsulinAdministration> Read(string csvpath)
         {
             var output = new Dictionary<string, InsulinAdministration>();
 
-            using (var reader = new StreamReader(@"C:\git\diabetes\diasend\insulin.csv"))
+            using (var reader = new StreamReader(csvpath))
             using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
             {
                 var records = csv.GetRecords<InsulinAdministration>().ToList();
 
                 foreach (var record in records)
                 {
-                    Console.WriteLine($"{record.Time}  {record.BasalAmount}   {record.BolusVolume}     {record.Carbs}");
+                    //Console.WriteLine($"{record.Time}  {record.BasalAmount}   {record.BolusVolume}     {record.Carbs}");
                     if (output.TryGetValue(record.Time, out var insulinAdministration))
                     {
                         if (record.BasalAmount != null)
@@ -39,10 +39,10 @@ namespace Helper.Diasend
                     {
                         output.Add(record.Time, record);
                     }
-
                 }
-                Console.WriteLine($"records {output.Count}");
-            }
+
+				return output.Select(kvp => kvp.Value).ToList();
+			}
         }
     }
 }

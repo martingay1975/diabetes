@@ -42,23 +42,37 @@ namespace Helper.Nightscout
 			return ret;
 		}
 
+		public async Task DeleteTreatmentAsync(string id)
+		{
+			var nsParams = NightscoutUriParams.CreateDelete(path: "treatments", id: id );
+			await SendAsync(nsParams);
+		}
+
 		/// <summary>
 		/// Add Treatments to Nightscout
 		/// </summary>
 		/// <param name="treatmentDto"></param>
 		/// <returns></returns>
-		public async Task<List<TreatmentDto>> PutTreatmentsAsync(List<TreatmentDto> treatmentListDto)
+		public async Task<List<TreatmentDto>> PostTreatmentsAsync(List<TreatmentDto> treatmentListDto)
 		{
-			var nsParams = NightscoutUriParams.CreatePut(path: "treatments", content: treatmentListDto);
+			var nsParams = NightscoutUriParams.CreatePost(path: "treatments", content: treatmentListDto);
 			var ret = await SendAsync<List<TreatmentDto>>(nsParams);
 			return ret;
 		}
 
-		private async Task<T> SendAsync<T>(NightscoutUriParams nightscoutUriParams)
+
+		private async Task<HttpResponseMessage> SendAsync(NightscoutUriParams nightscoutUriParams, bool sendIt = true)
 		{
 			var requestMessage = nightscoutUriBuilder.Build(nightscoutUriParams);
 
-			var httpResponse = await httpClient.SendAsync(requestMessage);
+			if (!sendIt)
+			{
+				var content = requestMessage?.Content?.ReadAsStringAsync();
+				var content1 = content == null ? null : await content;
+				Console.WriteLine($"Fake send {requestMessage?.RequestUri} `with content: {content1}");
+			}
+
+			var httpResponse = await httpClient.SendAsync(requestMessage ?? throw new Exception("No request specified"));
 			try
 			{
 				httpResponse.EnsureSuccessStatusCode();
@@ -69,8 +83,21 @@ namespace Helper.Nightscout
 				throw;
 			}
 
+			return httpResponse;
+
+		}
+
+		/// <summary>
+		/// Send a Http Request built from the information in <paramref name="nightscoutUriParams"/>. Checks it's successful and reads a JSON deserialized result back
+		/// </summary>
+		/// <typeparam name="TResponseType"></typeparam>
+		/// <param name="nightscoutUriParams"></param>
+		/// <returns>The JSON deserialized of the response from the http call</returns>
+		private async Task<TResponseType> SendAsync<TResponseType>(NightscoutUriParams nightscoutUriParams, bool sendIt = true)
+		{
+			var httpResponse = await SendAsync(nightscoutUriParams, sendIt);
 			var contentStream = await httpResponse.Content.ReadAsStreamAsync();
-			var ret = await JsonSerializer.DeserializeAsync<T>(contentStream, jsonSerializerOptions);
+			var ret = await JsonSerializer.DeserializeAsync<TResponseType>(contentStream, jsonSerializerOptions);
 			return ret ?? throw new Exception("Failed");
 		}
     }

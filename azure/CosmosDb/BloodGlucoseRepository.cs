@@ -36,14 +36,14 @@ namespace azure.CosmosDb
             try
             {
                 // Read the item to see if it exists.  
-                item = await container.ReadItemAsync<BloodGlucoseItem>(bloodGlucoseItem.id, new PartitionKey(bloodGlucoseItem.date));
+                item = await container?.ReadItemAsync<BloodGlucoseItem>(bloodGlucoseItem.id, new PartitionKey(bloodGlucoseItem.date));
             }
             catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
             {
                 try
                 {
                     // Create an item in the container representing the Andersen family. Note we provide the value of the partition key for this item, which is "Andersen"
-                    item = await container.CreateItemAsync(bloodGlucoseItem, new PartitionKey(bloodGlucoseItem.date));
+                    item = await container?.CreateItemAsync(bloodGlucoseItem, new PartitionKey(bloodGlucoseItem.date));
                 }
                 catch (CosmosException exCreate)
                 {
