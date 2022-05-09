@@ -1,13 +1,11 @@
 using CsvHelper;
 using System.Globalization;
-// mmol/L
-// mg/dl
-// 1 mg/dL = 0.0555 mmol/L
+
 namespace Helper.Diasend
 {
     public class DiasendCsvReader
     {
-        public List<InsulinAdministration> Read(string csvpath)
+        public IEnumerable<InsulinAdministration> Read(string csvpath)
         {
             var output = new Dictionary<string, InsulinAdministration>();
 
@@ -18,20 +16,21 @@ namespace Helper.Diasend
 
                 foreach (var record in records)
                 {
-                    //Console.WriteLine($"{record.Time}  {record.BasalAmount}   {record.BolusVolume}     {record.Carbs}");
+                    Console.WriteLine($"Time:{record.Time}  Basal:{record.BasalAmount}   Bolus:{record.BolusVolume}     Carbs:{record.Carbs}");
                     if (output.TryGetValue(record.Time, out var insulinAdministration))
                     {
-                        if (record.BasalAmount != null)
+						Console.WriteLine($"Update existing Time:{record.Time}");
+						if (!string.IsNullOrWhiteSpace(record.BasalAmount))
                         {
                             insulinAdministration.BasalAmount = record.BasalAmount;
                         }
 
-                        if (record.BolusVolume != null)
+                        if (!string.IsNullOrWhiteSpace(record.BolusVolume))
                         {
                             insulinAdministration.BolusVolume = record.BolusVolume;
                         }
 
-                        if (record.Carbs != null)
+                        if (!string.IsNullOrWhiteSpace(record.Carbs))
                         {
                             insulinAdministration.Carbs = record.Carbs;
                         }
@@ -41,7 +40,7 @@ namespace Helper.Diasend
                     }
                 }
 
-				return output.Select(kvp => kvp.Value).ToList();
+				return output.Values;
 			}
         }
     }

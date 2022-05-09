@@ -3,6 +3,9 @@ using Helper.Nightscout;
 
 namespace Helper
 {
+	/// <summary>
+	/// A delegate which creates a NightscoutClient object
+	/// </summary>
 	public delegate NightscoutClient CreateNightscoutClientFn();
 
 	public class DiasendToNightscoutTreatmentsManager
@@ -14,12 +17,16 @@ namespace Helper
 			this.createNightscoutClientFn = createNightscoutClientFn ?? throw new ArgumentNullException(nameof(createNightscoutClientFn));
 		}
 
-
-		public async Task DeleteComboBolus(DateTime fromDate)
+		/// <summary>
+		/// Goes to Nightscout and queries for all <paramref name="treatmentType"/> and removes their records from the date <paramref name="fromDate"/>
+		/// </summary>
+		/// <param name="fromDate">Filter from date</param>
+		/// <param name="treatmentType">The treatmentType value must match</param>
+		public async Task DeleteTreatmentType(DateTime fromDate, string treatmentType)
 		{
 			var nightscoutClient = this.createNightscoutClientFn();
 			var treatments = await nightscoutClient.GetTreatmentsAsync(fromDate, DateTime.UtcNow);
-			var comboBolusTreatments = treatments.Where(treatmentDto => treatmentDto.EventType == "Combo Bolus");
+			var comboBolusTreatments = treatments.Where(treatmentDto => treatmentDto.EventType == treatmentType);
 			foreach (var treatment in comboBolusTreatments)
 			{
 				await nightscoutClient.DeleteTreatmentAsync(treatment._id);
@@ -39,7 +46,7 @@ namespace Helper
 			var diasendCsvReader = new DiasendCsvReader();
 			var allData = diasendCsvReader.Read(csvPath);
 			var diasendSortedDataList = allData
-				.Where(insulinAdministration => lastTreatmentProcessDateTime < insulinAdministration.DateTimeUtc)
+				.Where(insulinAdministration => insulinAdministration.DateTimeUtc > lastTreatmentProcessDateTime)
 				.OrderBy(insulinAdministration => insulinAdministration.DateTimeUtc).ToList();
 
 			// loop around each of the diasend data

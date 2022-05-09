@@ -8,11 +8,23 @@ namespace Helper.Nightscout
         private static HttpClient httpClient = new HttpClient();
         public readonly static JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
         private readonly NightscoutUriBuilder nightscoutUriBuilder;
+		private readonly bool allowNightscoutWrite;
 
-		public NightscoutClient(string apiSecretSha1Hash, string host)
+		public NightscoutClient(string apiSecretSha1Hash, string host, bool allowNightscoutWrite)
 		{
+			if (string.IsNullOrEmpty(apiSecretSha1Hash))
+			{
+				throw new ArgumentException($"'{nameof(apiSecretSha1Hash)}' cannot be null or empty.", nameof(apiSecretSha1Hash));
+			}
+
+			if (string.IsNullOrEmpty(host))
+			{
+				throw new ArgumentException($"'{nameof(host)}' cannot be null or empty.", nameof(host));
+			}
+
 			var baseUrl = $@"{host}/api/v2/";
 			nightscoutUriBuilder = new NightscoutUriBuilder(apiSecretSha1Hash, baseUrl);
+			this.allowNightscoutWrite = allowNightscoutWrite;
 		}
 
 		/// <summary>
@@ -45,7 +57,7 @@ namespace Helper.Nightscout
 		public async Task DeleteTreatmentAsync(string id)
 		{
 			var nsParams = NightscoutUriParams.CreateDelete(path: "treatments", id: id );
-			await SendAsync(nsParams);
+			await SendAsync(nsParams, this.allowNightscoutWrite);
 		}
 
 		/// <summary>
@@ -56,7 +68,7 @@ namespace Helper.Nightscout
 		public async Task<List<TreatmentDto>> PostTreatmentsAsync(List<TreatmentDto> treatmentListDto)
 		{
 			var nsParams = NightscoutUriParams.CreatePost(path: "treatments", content: treatmentListDto);
-			var ret = await SendAsync<List<TreatmentDto>>(nsParams);
+			var ret = await SendAsync<List<TreatmentDto>>(nsParams, this.allowNightscoutWrite);
 			return ret;
 		}
 
@@ -69,7 +81,7 @@ namespace Helper.Nightscout
 			{
 				var content = requestMessage?.Content?.ReadAsStringAsync();
 				var content1 = content == null ? null : await content;
-				Console.WriteLine($"Fake send {requestMessage?.RequestUri} `with content: {content1}");
+				Console.WriteLine($"Fake send {requestMessage?.Method} {requestMessage?.RequestUri} `with content: {content1}");
 			}
 
 			var httpResponse = await httpClient.SendAsync(requestMessage ?? throw new Exception("No request specified"));
