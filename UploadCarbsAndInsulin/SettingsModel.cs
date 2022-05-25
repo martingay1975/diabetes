@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace RunExe
+namespace UploadCarbsAndInsulin
 {
 	public class SettingsModel
 	{
@@ -11,12 +11,12 @@ namespace RunExe
 
 		private readonly static JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
-		private readonly static string Path = $@"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\runExe-config.json";
+		private readonly static string Path = $@"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\UploadCarbsAndInsulin\runExe-config.json";
 
 		private static SettingsModel Default = new SettingsModel()
 		{
 			LastTreatmentProcessDateTime = DateTime.MinValue, // // must fill in
-			ApiSecretSha1Hash = "",	// must fill in
+			ApiSecretSha1Hash = "", // must fill in
 			Host = "", // must fill in
 			AllowNightscoutWrite = true
 		};
@@ -28,11 +28,10 @@ namespace RunExe
 			{
 				var settingsText = await File.ReadAllTextAsync(Path);
 				settings = JsonSerializer.Deserialize<SettingsModel>(settingsText, jsonSerializerOptions) ?? Default;
-				Console.WriteLine($"Load settings from {Path}");
 			}
 			catch
 			{
-				Console.WriteLine($"Load default settings");
+				
 			}
 
 			Console.WriteLine(JsonSerializer.Serialize(settings));
@@ -41,9 +40,8 @@ namespace RunExe
 
 		public static async Task SaveAsync(SettingsModel settingsModel)
 		{
-			var settings = JsonSerializer.Serialize<SettingsModel>(settingsModel, jsonSerializerOptions);
+			var settings = JsonSerializer.Serialize(settingsModel, jsonSerializerOptions);
 			await File.WriteAllTextAsync(Path, settings);
-			Console.WriteLine($"Saved settings to {Path}");
 		}
 	}
 }

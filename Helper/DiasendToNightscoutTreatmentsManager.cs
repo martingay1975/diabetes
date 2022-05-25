@@ -40,7 +40,7 @@ namespace Helper
 		/// <param name="csvPath">The path of Diasend's "Unsulin Use And Carbs" CSV file</param>
 		/// <param name="lastTreatmentProcessDateTime">From when we are interested in querying and uploading data</param>
 		/// <returns>The new lastTreatmentProcessDateTime, so it can be used in subsequent calls</returns>
-		public async Task<DateTime> TransferAsync(string csvPath, DateTime lastTreatmentProcessDateTime)
+		public async Task<(DateTime, ErrorInfo?)> TransferAsync(string csvPath, DateTime lastTreatmentProcessDateTime, bool ignoreErrors)
 		{
 
 			var diasendCsvReader = new DiasendCsvReader();
@@ -72,12 +72,24 @@ namespace Helper
 				}
 				catch (Exception ex)
 				{
-					Console.WriteLine(ex);
-					return newLastTreatmentProcessDateTime;
+					if (!ignoreErrors)
+					{
+						Console.WriteLine(ex);
+						return (newLastTreatmentProcessDateTime, new ErrorInfo { Exception = ex, InsulinAdministration = insulinAdministration });
+					}
 				}
 			}
 
-			return newLastTreatmentProcessDateTime;
+			return (newLastTreatmentProcessDateTime, null);
 		}
 	}
+
+	public class ErrorInfo
+	{
+		public Exception Exception { get; set; }
+
+		public InsulinAdministration InsulinAdministration { get; set; }
+	}
+
+
 }
