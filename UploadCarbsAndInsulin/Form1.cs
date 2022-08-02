@@ -27,13 +27,20 @@ namespace UploadCarbsAndInsulin
 
 				var dateFrom = chkOldData.Checked ? DateTime.MinValue : settings.LastTreatmentProcessDateTime;
 				var ignoreErrors = chkOldData.Checked;
-
+				ErrorInfo? errorInfo;
 				var diasendToNightscoutTreatmentsManager = new DiasendToNightscoutTreatmentsManager(() => new NightscoutClient(settings.ApiSecretSha1Hash, settings.Host, settings.AllowNightscoutWrite));
-				(settings.LastTreatmentProcessDateTime, var errorInfo) = await diasendToNightscoutTreatmentsManager.TransferAsync(diasendCsvPath, dateFrom, ignoreErrors);
+				try
+				{
+					(settings.LastTreatmentProcessDateTime, errorInfo) = await diasendToNightscoutTreatmentsManager.TransferAsync(diasendCsvPath, dateFrom, ignoreErrors);
+				}
+				catch (Exception ex)
+				{
+					errorInfo = new ErrorInfo {	Exception = ex };
+				}
 
 				if (errorInfo != null)
 				{
-					MessageBox.Show($"Error: {JsonSerializer.Serialize(errorInfo.InsulinAdministration)} Exception:{errorInfo.Exception.Message}");
+					MessageBox.Show($"Error: {JsonSerializer.Serialize(errorInfo?.InsulinAdministration)} Exception:{errorInfo.Exception.Message}");
 				}
 
 				if (settings.AllowNightscoutWrite && chkOldData.Checked == false)
