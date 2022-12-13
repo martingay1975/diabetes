@@ -5,6 +5,13 @@ namespace Helper
 {
 	public static class TreatmentMapper
 	{
+		private static InsulinAdministration? LatestBasal;
+
+		public static void Reset()
+		{
+			LatestBasal = null;
+		}
+
 		public static TreatmentDto? Map(InsulinAdministration insulinAdministration)
 		{
 			double? bolusTotal = null;
@@ -19,15 +26,38 @@ namespace Helper
 				carbsTotal = carbsG;
 			}
 
-			if (bolusTotal == null && carbsTotal == null)
+			double? basalTotal = null;
+			if (double.TryParse(insulinAdministration.BasalAmount, out var basal))
 			{
-				return null;
+				if (LatestBasal == null)
+				{
+					LatestBasal = insulinAdministration;
+					return null;
+				}
+				basalTotal = basal;
 			}
 
-			return TreatmentDtoFactory.CreateBolus(
-				dateTimeUtc: insulinAdministration.DateTimeUtc,
-				bolusMmoll: bolusTotal,
-				carbsG: carbsTotal);
+			if (bolusTotal.HasValue || carbsTotal.HasValue)
+			{
+				return TreatmentDtoFactory.CreateBolus(
+					dateTimeUtc: insulinAdministration.DateTimeUtc,
+					bolusMmoll: bolusTotal,
+					carbsG: carbsTotal);
+			}
+
+			if (basalTotal.HasValue)
+			{
+				var ret = TreatmentDtoFactory.CreateBasal(
+										dateTimeUtc: LatestBasal.DateTimeUtc,
+										basal: double.Parse(LatestBasal.BasalAmount),
+										durationMins: (int)((insulinAdministration.DateTimeUtc - LatestBasal.DateTimeUtc).TotalMinutes)
+				);
+
+				LatestBasal = insulinAdministration;
+				return ret;
+			}
+
+			return null;
 		}
 	}
 }

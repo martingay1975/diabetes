@@ -6,6 +6,12 @@ namespace UploadCarbsAndInsulin
 	{
 		public DateTime LastTreatmentProcessDateTime { get; set; }
 		public string ApiSecretSha1Hash { get; set; }
+
+		/// <summary>
+		/// Working examples
+		/// http://mgns.herokuapp.com
+		/// http://mgnightscout.strangled.net
+		/// </summary>
 		public string Host { get; set; }
 		public bool AllowNightscoutWrite { get; set; }
 
@@ -31,7 +37,7 @@ namespace UploadCarbsAndInsulin
 			}
 			catch
 			{
-				
+
 			}
 
 			Console.WriteLine(JsonSerializer.Serialize(settings));
@@ -43,5 +49,7 @@ namespace UploadCarbsAndInsulin
 			var settings = JsonSerializer.Serialize(settingsModel, jsonSerializerOptions);
 			await File.WriteAllTextAsync(Path, settings);
 		}
+
+		//{"lastTreatmentProcessDateTime":"2022-11-23T06:27:00+00:00","apiSecretSha1Hash":"mg1234nightscout","host":"http://mgnightscout.strangled.net","allowNightscoutWrite":true}
 	}
 }

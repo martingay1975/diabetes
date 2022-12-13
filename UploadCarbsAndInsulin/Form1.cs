@@ -5,15 +5,24 @@ using Microsoft.Win32;
 
 namespace UploadCarbsAndInsulin
 {
-    public partial class Form1 : Form
-    {
-        public Form1()
-        {
-            InitializeComponent();
-        }
+	public partial class Form1 : Form
+	{
+		public Form1()
+		{
+			InitializeComponent();
+		}
 
 		private async void button1_Click(object sender, EventArgs e)
 		{
+			var updateProgressBarFn = () =>
+			{
+				progressBar1.Increment(1);
+			};
+			var updateProgressBarSetMax = (int maxVal) =>
+			{
+				progressBar1.Maximum = maxVal;
+			};
+
 			var downloadsFolder = Registry.GetValue(@"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders", "{374DE290-123F-4565-9164-39C4925E467B}", String.Empty).ToString();
 			openFileDialog1.Filter = "Diasend CSV|*.csv";
 			openFileDialog1.InitialDirectory = downloadsFolder;
@@ -31,11 +40,11 @@ namespace UploadCarbsAndInsulin
 				var diasendToNightscoutTreatmentsManager = new DiasendToNightscoutTreatmentsManager(() => new NightscoutClient(settings.ApiSecretSha1Hash, settings.Host, settings.AllowNightscoutWrite));
 				try
 				{
-					(settings.LastTreatmentProcessDateTime, errorInfo) = await diasendToNightscoutTreatmentsManager.TransferAsync(diasendCsvPath, dateFrom, ignoreErrors);
+					(settings.LastTreatmentProcessDateTime, errorInfo) = await diasendToNightscoutTreatmentsManager.TransferAsync(diasendCsvPath, dateFrom, ignoreErrors, updateProgressBarFn, updateProgressBarSetMax);
 				}
 				catch (Exception ex)
 				{
-					errorInfo = new ErrorInfo {	Exception = ex };
+					errorInfo = new ErrorInfo { Exception = ex };
 				}
 
 				if (errorInfo != null)

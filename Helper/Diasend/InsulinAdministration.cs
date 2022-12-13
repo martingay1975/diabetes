@@ -21,15 +21,16 @@ namespace Helper.Diasend
 		/// Parses the local time from the CSV file and creates a UTC DateTime structure.
 		/// </summary>
 		[Ignore]
-		public DateTime DateTimeUtc {
+		public DateTime DateTimeUtc
+		{
 			get
 			{
 				try
 				{
 					var dt = DateTime.ParseExact(Time, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
 					DateTime res = DateTime.SpecifyKind(dt, DateTimeKind.Local);
-					var ret = res.ToUniversalTime();
-					return ret;
+					//var ret = res.ToUniversalTime();
+					return res;
 				}
 				catch (Exception ex)
 				{
@@ -37,5 +38,5 @@ namespace Helper.Diasend
 				}
 			}
 		}
-    }
+	}
 }

@@ -1,19 +1,20 @@
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
 namespace Helper.Nightscout
 {
 	public class NightscoutUriBuilder
-    {
-        public class NightscoutUriParams
-        {
-            public string Path { get; set; }
+	{
+		public class NightscoutUriParams
+		{
+			public string Path { get; set; }
 			public HttpMethod HttpMethod { get; set; }
 			public DateTime? ToDate { get; set; }
-            public DateTime? FromDate { get; set; }
-			public string ?Id { get; set; }
-            public int? Count { get; set; }
-            public string? DatePropertyName { get; set; }
+			public DateTime? FromDate { get; set; }
+			public string? Id { get; set; }
+			public int? Count { get; set; }
+			public string? DatePropertyName { get; set; }
 			public string? Content { get; set; }
 
 			public static NightscoutUriParams CreatePost<T>(string path, T? content)
@@ -65,44 +66,44 @@ namespace Helper.Nightscout
 			}
 		}
 
-        private readonly string baseUrl;
+		private readonly string baseUrl;
 		private readonly string apiSecretSha1Hash;
 
-        public NightscoutUriBuilder(string apiSecretSha1Hash, string baseUrl)
-        {
+		public NightscoutUriBuilder(string apiSecretSha1Hash, string baseUrl)
+		{
 			this.apiSecretSha1Hash = apiSecretSha1Hash.ToLower() ?? throw new ArgumentNullException(nameof(apiSecretSha1Hash));
 			this.baseUrl = baseUrl ?? throw new ArgumentNullException(nameof(baseUrl));
-        }
+		}
 
-        public HttpRequestMessage Build(NightscoutUriParams nightscoutUriParams)
-        {
-            var uriBuilder = new UriBuilder($@"{baseUrl}/{nightscoutUriParams.Path}");
-            
-            if (nightscoutUriParams.FromDate != null)
-            {
-                uriBuilder.AddToQueryString($"find[{nightscoutUriParams.DatePropertyName}][$gte]={FormatDate(nightscoutUriParams.FromDate.Value)}");
-            }
+		public HttpRequestMessage Build(NightscoutUriParams nightscoutUriParams)
+		{
+			var uriBuilder = new UriBuilder($@"{baseUrl}/{nightscoutUriParams.Path}");
 
-            if (nightscoutUriParams.ToDate != null)
-            {
-                uriBuilder.AddToQueryString($"find[{nightscoutUriParams.DatePropertyName}][$lt]={FormatDate(nightscoutUriParams.ToDate.Value)}");
-            }
+			if (nightscoutUriParams.FromDate != null)
+			{
+				uriBuilder.AddToQueryString($"find[{nightscoutUriParams.DatePropertyName}][$gte]={FormatDate(nightscoutUriParams.FromDate.Value)}");
+			}
 
-            if (nightscoutUriParams.Count != null)
-            {
-                uriBuilder.AddToQueryString($"count={nightscoutUriParams.Count.Value}");
-            }
+			if (nightscoutUriParams.ToDate != null)
+			{
+				uriBuilder.AddToQueryString($"find[{nightscoutUriParams.DatePropertyName}][$lt]={FormatDate(nightscoutUriParams.ToDate.Value)}");
+			}
+
+			if (nightscoutUriParams.Count != null)
+			{
+				uriBuilder.AddToQueryString($"count={nightscoutUriParams.Count.Value}");
+			}
 
 			if (nightscoutUriParams.Id != null)
 			{
 				uriBuilder.AddToQueryString($"find[_id][$eq]={nightscoutUriParams.Id}");
 			}
 
-            var requestMessage  = new HttpRequestMessage
-            {
-                Method = nightscoutUriParams.HttpMethod,
-                RequestUri = uriBuilder.Uri
-            };
+			var requestMessage = new HttpRequestMessage
+			{
+				Method = nightscoutUriParams.HttpMethod,
+				RequestUri = uriBuilder.Uri
+			};
 
 			if (nightscoutUriParams.Content != null)
 			{
@@ -115,10 +116,15 @@ namespace Helper.Nightscout
 			}
 
 
-			// SHA1 hash (lowercase) - Used https://passwordsgenerator.net/sha1-hash-generator/
-			requestMessage.Headers.Add("API-SECRET", this.apiSecretSha1Hash);
-            return requestMessage;
-        }
+			requestMessage.Headers.Add("API-SECRET", Hash(this.apiSecretSha1Hash));
+			return requestMessage;
+		}
+
+		private static string Hash(string input)
+		{
+			using var sha1 = SHA1.Create();
+			return Convert.ToHexString(sha1.ComputeHash(Encoding.UTF8.GetBytes(input))).ToLower();
+		}
 
 		private static string FormatDate(DateTime dt)
 		{

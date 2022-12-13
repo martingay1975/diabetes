@@ -1,13 +1,14 @@
+using System.Diagnostics;
 using System.Text.Json;
 using static Helper.Nightscout.NightscoutUriBuilder;
 
 namespace Helper.Nightscout
 {
-    public class NightscoutClient
-    {
-        private static HttpClient httpClient = new HttpClient();
-        public readonly static JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-        private readonly NightscoutUriBuilder nightscoutUriBuilder;
+	public class NightscoutClient
+	{
+		private static HttpClient httpClient = new HttpClient();
+		public readonly static JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+		private readonly NightscoutUriBuilder nightscoutUriBuilder;
 		private readonly bool allowNightscoutWrite;
 
 		public NightscoutClient(string apiSecretSha1Hash, string host, bool allowNightscoutWrite)
@@ -33,12 +34,12 @@ namespace Helper.Nightscout
 		/// <param name="dtLastDate">Get all entries equal or from the date</param>
 		/// <returns></returns>
 		public async Task<(List<EntryDto> entries, DateTime upToDate)> GetEntriesAsync(DateTime fromDate)
-        {
+		{
 			var nsParams = NightscoutUriParams.CreateGetQuery(path: "entries", datePropertyName: "dateString", fromDate: fromDate);
 			var ret = await SendAsync<List<EntryDto>>(nsParams);
-            var sortedEntries = ret?.OrderBy(x => x.SysTime).ToList() ?? new List<EntryDto>();
-            return (entries: sortedEntries, upToDate: nsParams.ToDate.Value);
-        }
+			var sortedEntries = ret?.OrderBy(x => x.SysTime).ToList() ?? new List<EntryDto>();
+			return (entries: sortedEntries, upToDate: nsParams.ToDate.Value);
+		}
 
 		/// <summary>
 		/// Get Treatments from Nightscout from the given date range
@@ -56,7 +57,7 @@ namespace Helper.Nightscout
 
 		public async Task DeleteTreatmentAsync(string id)
 		{
-			var nsParams = NightscoutUriParams.CreateDelete(path: "treatments", id: id );
+			var nsParams = NightscoutUriParams.CreateDelete(path: "treatments", id: id);
 			await SendAsync(nsParams, this.allowNightscoutWrite);
 		}
 
@@ -84,19 +85,19 @@ namespace Helper.Nightscout
 				Console.WriteLine($"Fake send {requestMessage?.Method} {requestMessage?.RequestUri} `with content: {content1}");
 			}
 
-			var httpResponse = await httpClient.SendAsync(requestMessage ?? throw new Exception("No request specified"));
 			try
 			{
+				var httpResponse = await httpClient.SendAsync(requestMessage ?? throw new Exception("No request specified"));
 				httpResponse.EnsureSuccessStatusCode();
+				return httpResponse;
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex.ToString());
+				Debug.WriteLine($"Exception: {ex}.");
+				Debug.WriteLine($"Uri: {requestMessage?.RequestUri}");
+				Debug.WriteLine($"Request: {JsonSerializer.Serialize(requestMessage)}");
 				throw;
 			}
-
-			return httpResponse;
-
 		}
 
 		/// <summary>
@@ -112,5 +113,5 @@ namespace Helper.Nightscout
 			var ret = await JsonSerializer.DeserializeAsync<TResponseType>(contentStream, jsonSerializerOptions);
 			return ret ?? throw new Exception("Failed");
 		}
-    }
+	}
 }

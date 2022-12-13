@@ -35,6 +35,7 @@ namespace UploadCarbsAndInsulin
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.chkOldData = new System.Windows.Forms.CheckBox();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.SuspendLayout();
             // 
             // button1
@@ -95,11 +96,19 @@ namespace UploadCarbsAndInsulin
             this.chkOldData.Text = "Ignore errors, old data";
             this.chkOldData.UseVisualStyleBackColor = true;
             // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(16, 396);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(330, 50);
+            this.progressBar1.TabIndex = 6;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(413, 414);
+            this.ClientSize = new System.Drawing.Size(413, 540);
+            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.chkOldData);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -122,5 +131,6 @@ namespace UploadCarbsAndInsulin
 		private Label label1;
 		private Label label2;
 		private CheckBox chkOldData;
+		private ProgressBar progressBar1;
 	}
 }
