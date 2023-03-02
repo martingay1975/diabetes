@@ -51,6 +51,18 @@ namespace Helper.Nightscout
 
 			}
 
+			public static NightscoutUriParams CreateGetQuery(string path, int count)
+			{
+				return new NightscoutUriParams
+				{
+					Path = path,
+					HttpMethod = HttpMethod.Get,
+					Count = count,
+					Id = null
+				};
+
+			}
+
 			public static NightscoutUriParams CreateGetQuery(string path, string? datePropertyName, DateTime? fromDate)
 			{
 				return new NightscoutUriParams

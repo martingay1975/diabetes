@@ -37,7 +37,15 @@ namespace Helper.Nightscout
 		{
 			var nsParams = NightscoutUriParams.CreateGetQuery(path: "entries", datePropertyName: "dateString", fromDate: fromDate);
 			var ret = await SendAsync<List<EntryDto>>(nsParams);
-			var sortedEntries = ret?.OrderBy(x => x.SysTime).ToList() ?? new List<EntryDto>();
+			var sortedEntries = ret?.OrderByDescending(x => x.SysTime).ToList() ?? new List<EntryDto>();
+			return (entries: sortedEntries, upToDate: nsParams.ToDate.Value);
+		}
+
+		public async Task<(List<EntryDto> entries, DateTime upToDate)> GetEntriesAsync(int count)
+		{
+			var nsParams = NightscoutUriParams.CreateGetQuery(path: "entries", count: 300);
+			var ret = await SendAsync<List<EntryDto>>(nsParams);
+			var sortedEntries = ret?.OrderByDescending(x => x.SysTime).ToList() ?? new List<EntryDto>();
 			return (entries: sortedEntries, upToDate: nsParams.ToDate.Value);
 		}
 
