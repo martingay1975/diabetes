@@ -6,13 +6,13 @@ namespace Helper.Nightscout
 		{
 			return new TreatmentDto()
 			{
-				_id = Guid.NewGuid().ToString("N"),
-				Created_at = $"{dateTimeUtc.ToString("yyyy-MM-dd")}T{dateTimeUtc.ToString("HH:mm:ss")}.000Z",
-				EventType = "Combo Bolus",
-				Insulin = bolusMmoll,
-				Carbs = carbsG,
+				_id = Guid.NewGuid().ToString("N").Substring(0, 24),
+				EventType = "",
 				EnteredBy = "diasend",
-				Units = "mmol"
+				Insulin = bolusMmoll,
+				Units = "mmol",
+				Created_at = $"{dateTimeUtc.ToString("yyyy-MM-dd")}T{dateTimeUtc.ToString("HH:mm:ss")}.000Z",
+				Carbs = carbsG,
 			};
 		}
 

@@ -78,6 +78,7 @@ namespace Helper.Nightscout
 		{
 			var nsParams = NightscoutUriParams.CreatePost(path: "treatments", content: treatmentListDto);
 			var ret = await SendAsync<List<TreatmentDto>>(nsParams, this.allowNightscoutWrite);
+			Debug.WriteLine($"Sent: {treatmentListDto.FirstOrDefault()?.Created_at}");
 			return ret;
 		}
 
@@ -90,13 +91,27 @@ namespace Helper.Nightscout
 			{
 				var content = requestMessage?.Content?.ReadAsStringAsync();
 				var content1 = content == null ? null : await content;
-				Console.WriteLine($"Fake send {requestMessage?.Method} {requestMessage?.RequestUri} `with content: {content1}");
+				Debug.WriteLine($"Fake send {requestMessage?.Method} {requestMessage?.RequestUri} `with content: {content1}");
 			}
 
 			try
 			{
+				if (requestMessage.Content != null)
+				{
+					Debug.WriteLine($"Fake send {requestMessage?.Method} {requestMessage?.RequestUri} `with content: {await requestMessage.Content.ReadAsStringAsync()}");
+				}
 				var httpResponse = await httpClient.SendAsync(requestMessage ?? throw new Exception("No request specified"));
-				httpResponse.EnsureSuccessStatusCode();
+				try
+				{
+					httpResponse.EnsureSuccessStatusCode();
+				}
+				catch (Exception ex)
+				{
+					var response = await httpResponse.Content.ReadAsStringAsync();
+					Debug.WriteLine($"ERROR response: {response}");
+					throw;
+				}
+
 				return httpResponse;
 			}
 			catch (Exception ex)

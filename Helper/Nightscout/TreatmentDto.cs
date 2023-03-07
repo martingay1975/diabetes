@@ -21,14 +21,15 @@ namespace Helper.Nightscout
 		/// </summary>
 		public string Created_at { get; set; }
 
-		/// <summary>
-		/// Current glucose.
-		/// </summary>
-		public string? Glucose { get; set; }
+		///// <summary>
+		///// Current glucose.
+		///// </summary>
+		//public string? Glucose { get; set; }
 
 		/// <summary>
 		/// Method used to obtain glucose, Finger or Sensor.
 		/// </summary>
+		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 		public string? GlucoseType { get; set; }
 
 		/// <summary>
@@ -36,15 +37,15 @@ namespace Helper.Nightscout
 		/// </summary>
 		public int? Carbs { get; set; }
 
-		/// <summary>
-		/// Amount of protein consumed in grams.
-		/// </summary>
-		public int? Protein { get; set; }
+		///// <summary>
+		///// Amount of protein consumed in grams.
+		///// </summary>
+		//public int? Protein { get; set; }
 
-		/// <summary>
-		/// Amount of fat consumed in grams.
-		/// </summary>
-		public int? Fat { get; set; }
+		///// <summary>
+		///// Amount of fat consumed in grams.
+		///// </summary>
+		//public int? Fat { get; set; }
 
 		/// <summary>
 		/// Amount of insulin, if any.
@@ -59,6 +60,7 @@ namespace Helper.Nightscout
 		/// <summary>
 		/// Description/notes of treatment.
 		/// </summary>
+		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 		public string? Notes { get; set; }
 
 		/// <summary>
@@ -66,8 +68,10 @@ namespace Helper.Nightscout
 		/// </summary>
 		public string? EnteredBy { get; set; }
 
+		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 		public double? Absolute { get; set; }
 
+		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 		public int? Duration { get; set; }
 	}
 }
