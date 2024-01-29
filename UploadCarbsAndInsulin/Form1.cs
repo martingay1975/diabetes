@@ -24,11 +24,10 @@ namespace UploadCarbsAndInsulin
 			};
 
 			var downloadsFolder = Registry.GetValue(@"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders", "{374DE290-123F-4565-9164-39C4925E467B}", String.Empty).ToString();
-			openFileDialog1.Filter = "Diasend CSV|*.csv";
-			openFileDialog1.InitialDirectory = downloadsFolder;
-			if (openFileDialog1.ShowDialog() == DialogResult.OK)
+			this.folderBrowserDialog1.InitialDirectory = downloadsFolder;
+			if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
 			{
-				var diasendCsvPath = openFileDialog1.FileName;
+				var glookoUnzippedFolderPath = folderBrowserDialog1.SelectedPath;
 
 				var settings = await SettingsModel.LoadAsync();
 
@@ -37,10 +36,14 @@ namespace UploadCarbsAndInsulin
 				var dateFrom = chkOldData.Checked ? DateTime.MinValue : settings.LastTreatmentProcessDateTime;
 				var ignoreErrors = chkOldData.Checked;
 				ErrorInfo? errorInfo;
-				var diasendToNightscoutTreatmentsManager = new DiasendToNightscoutTreatmentsManager(() => new NightscoutClient(settings.ApiSecretSha1Hash, settings.Host, settings.AllowNightscoutWrite));
+				var glookoToNightscoutTreatmentsManager = new GlookoToNightscoutTreatmentsManager(() => new NightscoutClient(settings.ApiSecretSha1Hash, settings.Host, settings.AllowNightscoutWrite));
 				try
 				{
-					(settings.LastTreatmentProcessDateTime, errorInfo) = await diasendToNightscoutTreatmentsManager.TransferAsync(diasendCsvPath, dateFrom, ignoreErrors, updateProgressBarFn, updateProgressBarSetMax);
+					var bolusCsvPath = Path.Combine(glookoUnzippedFolderPath, "Insulin Data", "bolus_data.csv");
+					var basalCsvPath = Path.Combine(glookoUnzippedFolderPath, "Insulin Data", "basal_data.csv");
+					(var lastBolusTime, errorInfo) = await glookoToNightscoutTreatmentsManager.TransferBolusAsync(bolusCsvPath, dateFrom, ignoreErrors, updateProgressBarFn, updateProgressBarSetMax);
+					(var lastBasalTime, errorInfo) = await glookoToNightscoutTreatmentsManager.TransferBasalAsync(basalCsvPath, dateFrom, ignoreErrors, updateProgressBarFn, updateProgressBarSetMax);
+					settings.LastTreatmentProcessDateTime = new DateTime(Math.Max(lastBasalTime.Ticks, lastBolusTime.Ticks));
 				}
 				catch (Exception ex)
 				{
@@ -49,7 +52,7 @@ namespace UploadCarbsAndInsulin
 
 				if (errorInfo != null)
 				{
-					MessageBox.Show($"Error: {JsonSerializer.Serialize(errorInfo?.InsulinAdministration)} Exception:{errorInfo.Exception.Message}");
+					MessageBox.Show($"Error: {JsonSerializer.Serialize(errorInfo?.GlookoBaseDataDto)} Exception:{errorInfo.Exception.Message}");
 				}
 
 				if (settings.AllowNightscoutWrite && chkOldData.Checked == false)

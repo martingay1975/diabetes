@@ -1,4 +1,4 @@
-﻿using Helper.Diasend;
+using Helper.Diasend;
 
 namespace Helper
 {
@@ -6,7 +6,7 @@ namespace Helper
 	{
 		public Exception Exception { get; set; }
 
-		public InsulinAdministration InsulinAdministration { get; set; }
+		public GlookoBaseDataDto GlookoBaseDataDto { get; set; }
 	}
 
 
