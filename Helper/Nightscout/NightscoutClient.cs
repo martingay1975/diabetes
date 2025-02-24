@@ -98,7 +98,7 @@ namespace Helper.Nightscout
 			{
 				if (requestMessage.Content != null)
 				{
-					Debug.WriteLine($"Fake send {requestMessage?.Method} {requestMessage?.RequestUri} `with content: {await requestMessage.Content.ReadAsStringAsync()}");
+					Debug.WriteLine($"Send {requestMessage?.Method} {requestMessage?.RequestUri} `with content: {await requestMessage.Content.ReadAsStringAsync()}");
 				}
 				var httpResponse = await httpClient.SendAsync(requestMessage ?? throw new Exception("No request specified"));
 				try
